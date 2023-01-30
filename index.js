@@ -131,7 +131,7 @@ function viewEmployeeByDepartment() {
 /* The code defines a function promptDepartment which takes in an argument departmentChoices. The function:
 Uses the inquirer library to prompt the user to choose a department from a list of departmentChoices Then, with the .then method, it runs a callback function that: Defines a SQL query to select employee ID, first name, last name, role title, and department name from the employee, role, and department tables where the department ID matches the selected department. Runs the query using the connection.query method with the selected department ID and a callback function that: Throws an error if one occurs during the query execution Prints the query result to the console using the console.table method Prints the number of employees viewed and logs a message to the console Calls the firstPrompt function. */
 
-function.promptDepartment(departmentChoices)   {
+function promptDepartment(departmentChoices) {
     inquirer.prompt([{
         type: 'list',
         name: 'departmentId',
@@ -253,8 +253,128 @@ function removeEmployees() {
     });
 }
 
+/* inquirer npm package to create a prompt for the user to choose an employee to remove from the 'employee' database table. The selected employee's ID is then used in a DELETE SQL query to remove the employee from the database. The result of the query is logged in the console along with the number of affected rows, and the function firstPrompt() is called to return to the first prompt.*/
+
+function promptDelete(deleteEmployeeChoices) {
+    inquirer.prompt ([
+        {
+            type:'list',
+            name: 'employeeId',
+            message: 'Which Employee To Remove?'
+            choices: deleteEmployeeChoices
+        }
+        ])
+
+        .then(function(answer) {
+            var query = `DELETE FROM employee WHERE ?`;
+
+            connection.query(query, {id: answer.employeeId},
+                function (err, res) {
+
+                    console.table(res);
+                    console.log(res.affectedRows + 'Deleted!');
+
+                    firstPrompt();
+                });
+        });
+}
+
+/*The code is defining two functions, updateEmployeeRole() and employeeArray().
+
+The updateEmployeeRole() function calls the employeeArray() function.
+
+The employeeArray() function retrieves a list of employees from a SQL database by executing a SELECT query that joins multiple tables. The result of the query is logged in the console using console.table(res).
+
+The SELECT query retrieves information about employees, including their ID, first name, last name, role title, department, salary, and manager. The retrieved information is then used to create an array of objects, called employeeChoices, where each object contains the ID and name of an employee.
+
+Finally, the roleArray() function is called and passed the employeeChoices array as an argument. */
+
+function updateEmployeeRole() {
+    employeeArray();
+}
+
+function employeeArray() {
+    console.log('Updating Employee');
+
+    var query = 
+    `SELECT e.id, e.first_name, e.last_name, r.title, d.name AS department, r.salary, CONCAT(m.first_name, ' ', m.last_name) AS manager
+    FROM employee e 
+    JOIN role r ON e.role+id = r.id
+    JOIN department d ON d.id = r.departmen_id
+    JOIN employee m ON m.id = e.manager_id`
+
+    connection.query(query, function (err, res) {
+        if (err) throw err;
+
+        const employeeChoices = res.map (({id, first_name, Last_name}) => ({
+            value:id, 
+            name:`${first_name} ${last_name}`
+        }));
+        console.table(res);
+        console.log('Update EmployeeArray');
+
+        roleArray(employeeChoices);
+    });
+}
+
 /* */
 
+function roleArray(employeeChoices) {
+    console.log('Updating Role');
+
+    var query = `SELECT r.id, r.title, r.salary FROM role r`
+    let roleChoices;
+
+    connection.query(query, functnion (err, res) {
+        if (err) throw err;
+
+        roleChoices = res.map (({ id, title, salary}) => ({
+            value: id,
+            title:`${title}`,
+            salary: `${salary}`
+        }));
+
+        console.table(res);
+        console.log('Update roleArray');
+
+        promptEmployeeRole(employeeChoices, roleChoices);
+    });
+}
+/* */
+
+function promptEmployeeRole(employeeChoices, roleChoices) {
+    inquirer.promp([
+        {
+            type:'list',
+            name: 'employeeId',
+            message: 'Which employee for this role?',
+            choices: deleteEmployeeChoices
+        },
+        {
+            type:'list',
+            name: 'roleId',
+            message: 'Which Role To Update?',
+            choices: roleChoices
+        },
+    ])
+    .then(function (answer) {
+        var query = `UPDATE employee SET role_id = ? WHERE id = ?`
+
+        connection.query(query, [
+            answer.roleId,
+            answer.employeeId
+        ],
+        functnion (err, res) {
+            if (err) throw err;
+
+            console.table(res);
+            console.log(res.affectedRows + 'Update Sucessful');
+
+            firstPrompt();
+        });
+    });
+}
 
 
+/* */
 
