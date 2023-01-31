@@ -51,7 +51,7 @@ function firstPrompt() {
                 break;
             case 'View Employees':
                 viewEmployees();
-                break:
+                break;
             case 'Add Employee':
                 addEmployee();
                 break;
