@@ -135,7 +135,7 @@ function promptDepartment(departmentChoices) {
     inquirer.prompt([{
         type: 'list',
         name: 'departmentId',
-        message: 'Which Department Do You Want?'
+        message: 'Which Department Do You Want?',
         choices: departmentChoices
     }])
 
@@ -260,7 +260,7 @@ function promptDelete(deleteEmployeeChoices) {
         {
             type:'list',
             name: 'employeeId',
-            message: 'Which Employee To Remove?'
+            message: 'Which Employee To Remove?',
             choices: deleteEmployeeChoices
         }
         ])
@@ -317,7 +317,8 @@ function employeeArray() {
     });
 }
 
-/* */
+/*This code is defining a function named "roleArray" that is used to update the role of an employee. The function starts by logging a message to the console indicating that the role is being updated. Then, it defines a SQL query that selects the id, title, and salary of all roles from a "role" table. The function sets up a callback function for the SQL query that logs an error if one occurs, and maps the result of the query to an array of objects, each containing a value, title, and salary property. Finally, it logs the result of the query using console.table and calls another function named "promptEmployeeRole" with the two arrays as parameters.
+ */
 
 function roleArray(employeeChoices) {
     console.log('Updating Role');
@@ -325,7 +326,7 @@ function roleArray(employeeChoices) {
     var query = `SELECT r.id, r.title, r.salary FROM role r`
     let roleChoices;
 
-    connection.query(query, functnion (err, res) {
+    connection.query(query, function (err, res) {
         if (err) throw err;
 
         roleChoices = res.map (({ id, title, salary}) => ({
@@ -340,7 +341,7 @@ function roleArray(employeeChoices) {
         promptEmployeeRole(employeeChoices, roleChoices);
     });
 }
-/* */
+/* This is a JavaScript function that prompts the user to choose an employee and a role using the inquirer library. The chosen employee's role is then updated in the database with the UPDATE query. The function takes two parameters: employeeChoices and roleChoices. These are arrays used as options for the user to select from in the prompt. The updated information is logged to the console in the form of a table and with a message indicating the number of successful updates. The function ends by calling firstPrompt() to return to the initial prompt. */
 
 function promptEmployeeRole(employeeChoices, roleChoices) {
     inquirer.promp([
@@ -364,7 +365,7 @@ function promptEmployeeRole(employeeChoices, roleChoices) {
             answer.roleId,
             answer.employeeId
         ],
-        functnion (err, res) {
+        function (err, res) {
             if (err) throw err;
 
             console.table(res);
@@ -376,5 +377,47 @@ function promptEmployeeRole(employeeChoices, roleChoices) {
 }
 
 
+/*This is a JavaScript function that adds a new role to the database. It first retrieves a list of departments and their information with a SQL SELECT query. The query joins three tables: employee, role, and department on their respective id columns. The result of the query is grouped by the id and name columns of the department.
+
+The function then maps the result of the query to a departmentChoices array of objects with value and name properties, which are used as options for the user in a later prompt. The result is logged to the console as a table and with a message indicating that it is the department array. The function ends by calling promptAddRole and passing in the departmentChoices array as a parameter. */
+
+function addRole() {
+    var query = `SELECT d.id, d.name, r.salary AS budget 
+    FROM employee e JOIN role R ON e.role_id = r.id
+    JOIN department d ON d.id = r.department_id
+    GROUP BY d.id, d.name`
+
+    connection.query(query, function (err, res) {
+        if (err) throw err;
+
+        const departmentChoices = res.map((
+            { id, name }) =>({
+                value: 'id',
+                name: `${id} ${name}`
+            }));
+           console.table(res);
+           console.log('Department Array'); 
+
+           promptAddRole(departmentChoices);
+    });
+}
+
 /* */
 
+function promptAddRole(departmentChoices) {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'roleTitle',
+            message: 'Role Title?'
+        },
+        {
+            type: 'input',
+            name: 'roleSalary',
+            message: 'Role Salary?'
+        },
+        {
+            
+        }
+    ])
+}
