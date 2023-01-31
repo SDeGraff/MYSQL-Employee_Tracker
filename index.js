@@ -1,7 +1,5 @@
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const inquirer = require('inquirer');
-// const { default: Choices } = import('inquirer/lib/objects/choices');
-// const { allowedNodeEnvironmentFlags } = require('process');
 const consoleTable = require('console.table');
 
 
@@ -10,8 +8,8 @@ const consoleTable = require('console.table');
 Database: 'employees_DB' (the database being connected to is named 'employees_DB')*/
 
 var connection = mysql.createConnection({
-    host: 'localhost',
-    port: 3001,
+    host: '127.0.0.1',
+    port: 3306,
     user: 'root',
     password: 'Password',
     database: 'employees_DB'
