@@ -24,7 +24,7 @@ Calls another function firstPrompt if the connection is successful.*/
 
 connection.connect(function (err) {
     if (err) throw err;
-    firstPrompt();
+    firstPrompt();  
 });
 
 
