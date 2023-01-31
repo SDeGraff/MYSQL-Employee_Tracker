@@ -417,7 +417,28 @@ function promptAddRole(departmentChoices) {
             message: 'Role Salary?'
         },
         {
-            
-        }
+            type: 'list',
+            name: 'departmentId',
+            message: 'Department?',
+            choices: departmentChoices
+        },
     ])
+    .then(function (answer) {
+        var query = `INSERT INTO role SET ?`
+
+        connection.query(query, {
+            title: answer.title,
+            salary: answer.salary,
+            department_id: answer.departmentId
+
+        },
+        function (err, res) {
+            if (err) throw err;
+
+            console.table(res);
+            console.log('Inserted Role');
+
+            firstPrompt();
+        });
+    })
 }
