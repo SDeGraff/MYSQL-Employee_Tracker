@@ -1,8 +1,8 @@
 const mysql = require('mysql');
 const inquirer = require('inquirer');
-const { default: Choices } = require('inquirer/lib/objects/choices');
-const { allowedNodeEnvironmentFlags } = require('process');
-require('console.table');
+// const { default: Choices } = import('inquirer/lib/objects/choices');
+// const { allowedNodeEnvironmentFlags } = require('process');
+const consoleTable = require('console.table');
 
 
 
@@ -34,7 +34,7 @@ function firstPrompt() {
     inquirer.prompt({
         type: 'list',
         name: 'task',
-        message: 'What do?',
+        message: 'What do you want to do?',
         Choices: [
             'View Employee',
             'View Employees',
